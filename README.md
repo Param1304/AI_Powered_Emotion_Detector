@@ -154,17 +154,25 @@ AI_Powered_Emotion_Detector/
 
 ## Demo & Screenshots
 
-### Home Page
-![Home Page](https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20185938.png)
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20185938.png?raw=true" width="300"/>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20190756.png?raw=true" width="300"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20191054.png?raw=true" width="300"/>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20190601.png?raw=true" width="300"/>
+    </td>
+  </tr>
+</table>
 
-### Facial Emotion Detection
-![Facial Detection](https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20190756.png)
-
-### Voice Emotion Detection
-![Voice Detection](https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20191054.png)
-
-### Task suggestion
-![Task suggestion](https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20190601.png)
 
 ---
 
@@ -189,15 +197,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
-**Param Singh**  
-Data Science Intern at Zidio Development  
-[Email: your-email@example.com](mailto:your-email@example.com)  
-[LinkedIn](https://www.linkedin.com/in/your-linkedin-profile)
-
----
-
-Feel free to reach out if you have any questions or feedback!
-
----
-
-This README provides a detailed and attractive overview of your project, outlining its technical scope, usage, and contribution guidelines in a professional manner. Enjoy showcasing your work!
+**Param Parekh**   
+[Email: parammparekh13@gmail.com](parammparekh13@gmail.com)  
+[LinkedIn](https://www.linkedin.com/in/param-parekh-ba5258208/)
