@@ -157,18 +157,18 @@ AI_Powered_Emotion_Detector/
 <table>
   <tr>
     <td align="center">
-      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20185938.png?raw=true" width="300"/>
+      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20185938.png?raw=true" width="500"/>
     </td>
     <td align="center">
-      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20190756.png?raw=true" width="300"/>
+      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20190756.png?raw=true" width="500"/>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20191054.png?raw=true" width="300"/>
+      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20191054.png?raw=true" width="500"/>
     </td>
     <td align="center">
-      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20190601.png?raw=true" width="300"/>
+      <img src="https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20190601.png?raw=true" width="500"/>
     </td>
   </tr>
 </table>
@@ -198,5 +198,5 @@ This project is licensed under the [MIT License](LICENSE).
 ## Contact
 
 **Param Parekh**   
-[Email: parammparekh13@gmail.com](parammparekh13@gmail.com)  
+[Email: parammparekh13@gmail.com] 
 [LinkedIn](https://www.linkedin.com/in/param-parekh-ba5258208/)
