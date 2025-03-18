@@ -197,6 +197,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
-Developer : **Param Parekh**   
-Email: parammparekh13@gmail.com
-[LinkedIn](https://www.linkedin.com/in/param-parekh-ba5258208/)
+**Developer:** Param Parekh  
+**Email:** parammparekh13@gmail.com  
+**LinkedIn:** [https://www.linkedin.com/in/param-parekh-ba5258208/](https://www.linkedin.com/in/param-parekh-ba5258208/)
