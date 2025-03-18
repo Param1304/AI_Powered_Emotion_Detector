@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detect Mood</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Detect Your Mood</h1>
+        <form action="{% url 'detect_mood' %}" method="post">
+            {% csrf_token %}
+            <label>1. Have you experienced a persistent feeling of sadness, hopelessness or constant worry? Describe</label>
+            <input type="text" name="q1" required>
+
+            <label>2. Do you find it difficult to enjoy things you used to find pleasurable?</label>
+            <input type="text" name="q2" required>
+
+            <label>3. Does your mind race with uncontrollable thoughts ?</label>
+            <input type="text" name="q3" required>
+
+            <label>4. Have you had thoughts of ending everything ?</label>
+            <input type="text" name="q4" required>
+
+            <label>5. Do you feel disconnected from others or isolated even when surrounded by people?</label>
+            <input type="text" name="q5" required>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        {% if mood %}
+            <h2>Predicted Mood: {{ mood }}</h2>
+            <a href="{% url 'suggest_task' mood=mood %}" class="btn">Get Task Suggestions</a>
+        {% endif %}
+
+    </div>
+    {% comment %} <div class="grid-container">
+        
+        <div class="grid-item" onclick="location.href='{% url 'suggest_task' mood=mood %}'">
+            <h2>Suggest Task</h2>
+        </div>
+    </div> {% endcomment %}
+</body>
+</html>

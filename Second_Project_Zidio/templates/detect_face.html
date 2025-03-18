@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facial Emotion Detection</title>
+    <link rel="stylesheet" href="{% static 'detect_face.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Facial Emotion Detection</h1>
+        <p>Live video feed analyzing facial emotions.</p>
+        <div class="video-container">
+            <img src="{% url 'video_feed' %}" alt="Live Video Feed">
+        </div>
+    </div>
+</body>
+</html>

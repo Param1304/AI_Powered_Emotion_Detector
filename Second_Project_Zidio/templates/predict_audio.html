@@ -1,0 +1,29 @@
+<button id="recordButton">Record (5s)</button>
+<div id="result"></div>
+
+<script src="{% static 'js/recorder.js' %}"></script>
+<script>
+let recorder;
+document.getElementById('recordButton').addEventListener('click', async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recorder = new MediaRecorder(stream);
+    const audioChunks = [];
+    
+    recorder.ondataavailable = e => audioChunks.push(e.data);
+    recorder.start();
+    
+    setTimeout(async () => {
+        recorder.stop();
+        const blob = new Blob(audioChunks, { type: 'audio/wav' });
+        const formData = new FormData();
+        formData.append('audio', blob, 'recording.wav');
+        
+        const response = await fetch('/predict/', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        document.getElementById('result').innerText = result.emotion;
+    }, 5000);
+});
+</script>

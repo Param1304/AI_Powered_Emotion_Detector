@@ -1,0 +1,40 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    padding:30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,01);
+}
+h1{
+    color:#333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Add new styles for chart containers */
+.chart-container {
+    margin: 20px 0;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.back-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background: #1AAD98;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+}
