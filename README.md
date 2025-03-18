@@ -1,8 +1,6 @@
 
 # AI Powered Emotion Detector
 
-![Project Banner](https://raw.githubusercontent.com/Param1304/AI_Powered_Emotion_Detector/main/Second_Project_Zidio/banner.png)
-
 AI Powered Emotion Detector is an end-to-end, Django-based web application designed to assess human emotions through multiple modalities – **text**, **facial expressions**, and **voice**. Developed as part of my Data Science Internship at Zidio Development, this project leverages state-of-the-art machine learning and computer vision techniques to provide real-time mood detection and task suggestions.
 
 ---
@@ -157,16 +155,16 @@ AI_Powered_Emotion_Detector/
 ## Demo & Screenshots
 
 ### Home Page
-![Home Page](https://raw.githubusercontent.com/Param1304/AI_Powered_Emotion_Detector/main/Second_Project_Zidio/screenshots/home.png)
+![Home Page](https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20185938.png)
 
 ### Facial Emotion Detection
-![Facial Detection](https://raw.githubusercontent.com/Param1304/AI_Powered_Emotion_Detector/main/Second_Project_Zidio/screenshots/detect_face.png)
+![Facial Detection](https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20190756.png)
 
 ### Voice Emotion Detection
-![Voice Detection](https://raw.githubusercontent.com/Param1304/AI_Powered_Emotion_Detector/main/Second_Project_Zidio/screenshots/detect_voice.png)
+![Voice Detection](https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20191054.png)
 
-### Mood Analysis Dashboard
-![Dashboard](https://raw.githubusercontent.com/Param1304/AI_Powered_Emotion_Detector/main/Second_Project_Zidio/screenshots/analyse_data.png)
+### Task suggestion
+![Task suggestion](https://github.com/Param1304/AI_Powered_Emotion_Detector/blob/main/screenshots/Screenshot%202025-03-18%20190601.png)
 
 ---
 
