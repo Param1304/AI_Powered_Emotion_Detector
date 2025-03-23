@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import home, detect_mood, suggest_task, detect_face, video_feed
-from .views import analyze_voice, detect_voice
+from .views import analyze_voice, detect_voice, detect_emotion
 # from .views import predict
 from django.conf.urls.static import static
 from django.conf import settings
