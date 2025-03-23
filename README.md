@@ -26,14 +26,14 @@ In today's fast-paced work environments, understanding employee sentiment can be
 
 - Analyzing **text inputs** with a fine-tuned BERT model for mood classification.
 - Detecting **facial expressions** using OpenCV’s Haar cascades (face, smile, and eye detection) to infer emotions in real time.
-- Implementing **voice emotion detection** using Librosa to extract audio features from 5-second recordings and classify them into emotion categories.
+- Implementing **voice emotion detection** using Librosa and Ffmpeg to extract audio features from 5-second recordings and classify them into emotion categories.
 ---
 
 ## Features
 
 - **Multi-modal Emotion Detection**
   - **Text-based Analysis**: Leverages a finetuned BERT model with cosine similarity to classify user text input into 4 categories viz. Normal, Anxiety, Depression, or Suicidal.
-  - **Facial Emotion Recognition**: Utilizes OpenCV for real-time detection of facial expressions, employing haarcascades for face, smile, and eye detection.
+  - **Facial Emotion Recognition**: Utilizes OpenCV for real-time detection of facial expressions, employing haarcascades for emotion detection from face, smile, and eye characteristics.
   - **Voice Emotion Detection**: Records 5 seconds of audio via the browser, extracts features (MFCC, chroma, spectral contrast) with Librosa, and classifies emotion.
 - **Task Optimization Engine**
   - Provides personalized task recommendations based on the detected emotional state.
@@ -148,7 +148,7 @@ AI_Powered_Emotion_Detector/
 - **Frontend**: HTML, CSS, JavaScript
 - **Computer Vision**: OpenCV (Face, Smile, Eye detection)
 - **Natural Language Processing**: BERT (via Hugging Face Transformers)
-- **Audio Processing**: Librosa, SoundFile, Pydub (if needed)
+- **Audio Processing**: Librosa, SoundFile, Ffmpeg
 - **Machine Learning**: Scikit-Learn, TensorFlow (if using neural networks)
 ---
 
