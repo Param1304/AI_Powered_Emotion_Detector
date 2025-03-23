@@ -34,7 +34,7 @@ In today's fast-paced work environments, understanding employee sentiment can be
 - **Multi-modal Emotion Detection**
   - **Text-based Analysis**: Leverages a finetuned BERT model with cosine similarity to classify user text input into 4 categories viz. Normal, Anxiety, Depression, or Suicidal.
   - **Facial Emotion Recognition**: Utilizes OpenCV for real-time detection of facial expressions, employing haarcascades for emotion detection from face, smile, and eye characteristics.
-  - **Voice Emotion Detection**: Records 5 seconds of audio via the browser, extracts features (MFCC, chroma, spectral contrast) with Librosa, and classifies emotion.
+  - **Voice Emotion Detection**: Records 5 seconds of audio via the browser, extracts features (MFCC, pitch, rms energy, spreaking rate) with Librosa, and classifies emotion. It has been tested on both live audio input as well as labelled audio files from CREMA-D audio dataset
 - **Task Optimization Engine**
   - Provides personalized task recommendations based on the detected emotional state.
 - **End-to-End Web Application**
