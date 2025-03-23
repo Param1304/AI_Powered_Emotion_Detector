@@ -4,6 +4,9 @@ import soundfile as sf
 import librosa
 import os
 import joblib
+import ffmpeg
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def home(request):
     return render(request, 'home.html', {'mood':'Normal'})
@@ -105,26 +108,82 @@ eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml
 
 
 recent_emotions = []
+def analyze_eyebrows(gray_face, eyes):
+    if len(eyes) == 0:
+        return "unknown"
+    eye_y = min([ey for (ex, ey, ew, eh) in eyes])
+    forehead_region = gray_face[:eye_y, :]
+    edges = cv2.Canny(forehead_region, 50, 150)
+    lines = cv2.HoughLinesP(edges, 1, np.pi / 180, threshold=50, minLineLength=50, maxLineGap=10)
+    if lines is not None:
+        horizontal_lines = [line for line in lines if abs(line[0][1] - line[0][3]) < 10]
+        if len(horizontal_lines) > 1:  
+            return "furrowed"
+    return "normal"
 
+def analyze_mouth(gray_face, smiles):
+    if len(smiles) > 0:
+        for (sx, sy, sw, sh) in smiles:
+            mouth_region = gray_face[sy:sy + sh, sx:sx + sw]
+            top_half = mouth_region[:sh//2, :]
+            bottom_half = mouth_region[sh//2:, :]
+            top_edges = np.sum(cv2.Canny(top_half, 50, 150))
+            bottom_edges = np.sum(cv2.Canny(bottom_half, 50, 150))
+            if top_edges > bottom_edges:
+                return "upward"  # Happy
+            else:
+                return "downward"  # Sad
+    return "neutral"
 # Emotion classification based on face brightness, smile, and eye detection
 def classify_emotion(gray_face, face_region_color):
     global recent_emotions
     mean_intensity = np.mean(gray_face)
-    smiles = smile_cascade.detectMultiScale(gray_face, scaleFactor=1.8, minNeighbors=25, minSize=(25, 25))
-    eyes = eye_cascade.detectMultiScale(gray_face, scaleFactor=1.2, minNeighbors=15, minSize=(20, 20))
+    smiles = smile_cascade.detectMultiScale(
+        gray_face, scaleFactor=1.8, minNeighbors=25, minSize=(25, 25)
+    )
+    eyes = eye_cascade.detectMultiScale(
+        gray_face, scaleFactor=1.2, minNeighbors=15, minSize=(20, 20)
+    )
+    # smiles = smile_cascade.detectMultiScale(gray_face, scaleFactor=1.8, minNeighbors=25, minSize=(25, 25))
+    # eyes = eye_cascade.detectMultiScale(gray_face, scaleFactor=1.2, minNeighbors=15, minSize=(20, 20))
+    eyebrow_status = analyze_eyebrows(gray_face, eyes)
+    mouth_status = analyze_mouth(gray_face, smiles)
+    score=3
     # Decision rules 
-    if len(smiles) > 0:
+    if len(smiles) > 0 and mouth_status == "upward" and eyebrow_status=="normal":
+        # emotion = "Happy (Normal)"
+        score +=3
+    # elif len(eyes) == 0 or (mouth_status=="downward" and mean_intensity<100): 
+        # emotion = "Suicidal"
+    elif eyebrow_status == "furrowed":
+        score -= 2
+    if mouth_status == "downward":
+        if mean_intensity < 100:
+            score -= 3
+        else:
+            score -= 1
+    if mean_intensity < 80:
+        score -= 2
+    elif mean_intensity > 150:
+        score += 2
+    if len(eyes) == 0:
+        score -= 3
+    if score >= 3:
         emotion = "Happy (Normal)"
-    elif len(eyes) == 0: 
-        emotion = "Depression"
-    elif mean_intensity > 100:
-        emotion = "Normal"
-    elif 130 < mean_intensity <= 180:
-        emotion = "Anxiety"
-    elif 80 < mean_intensity <= 130:
-        emotion = "Depression"
-    else:
+    elif score <= -3:
         emotion = "Suicidal"
+    elif score < 0 and score >-3:
+        emotion = "Anxiety"
+    else:
+        emotion = "Depression"
+    # elif mean_intensity > 130 or eyebrow_status=="furrowed":
+    #     emotion = "Anxiety"
+    # elif 130 < mean_intensity <= 180:
+    #     emotion = "Anxiety"
+    # elif mouth_status == "downward" or (80 < mean_intensity <= 130):
+    #     emotion = "Depression"
+    # else:
+    #     emotion = "Normal"
 
     recent_emotions.append(emotion)
     if len(recent_emotions) > 5:
@@ -139,7 +198,6 @@ def generate_frames():
         if not success:
             break
 
-    
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5, minSize=(30, 30))
 
@@ -177,94 +235,107 @@ def video_feed(request):
 def detect_face(request):
     return render(request, 'detect_face.html')
 
-EMOTION_CATEGORIES = ["Happy", "Calm", "Angry", "Sad"]
+# def convert_to_wav(input_path, output_path):
+#     try:
+#         ffmpeg.input(input_path).output(
+#             output_path,
+#             format = 'wav',
+#             acodec = 'pcm_s16le',
+#             ac=1,
+#             ar='22050'
+#         ).overwrite_output().run(capture_stdout=True, capture_stderr=True)
+#         return True
+#     except Exception as e:
+#         print("Error during conversion:",e)
+#         return True 
+import subprocess
+def convert_to_wav(input_path, output_path):
+    """
+    Convert the input audio file to a WAV file using the ffmpeg command-line tool.
+    The output is in WAV format with PCM S16LE codec, mono channel, and 22050 Hz sampling rate.
+    """
+    try:
+        # Call ffmpeg using subprocess.
+        # The '-y' flag overwrites the output file if it exists.
+        subprocess.run([
+            'ffmpeg', '-y', '-i', input_path,
+            '-acodec', 'pcm_s16le', '-ac', '1', '-ar', '22050', output_path
+        ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return True
+    except Exception as e:
+        print("Error during conversion:", e)
+        return False
 
+    
 def extract_features(audio_path):
-    # audio_path = convert_to_wav(audio_path)
-    y, sr = librosa.load(audio_path, sr=None)
-    mfccs = np.mean(librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13).T, axis=0)
-    chroma = np.mean(librosa.feature.chroma_stft(y=y, sr=sr).T, axis=0)
-    spectral_contrast = np.mean(librosa.feature.spectral_contrast(y=y, sr=sr).T, axis=0)
-    return np.hstack([mfccs, chroma, spectral_contrast])
+    y, sr = librosa.load(audio_path, sr=22050)
+    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=20)
+    mfcc_mean = np.mean(mfcc, axis=1)  
+    mfcc_std = np.std(mfcc, axis=1)
+    # Compute pitch using pyin
+    f0, voiced_flag, _ = librosa.pyin(y, fmin=librosa.note_to_hz('C2'), fmax=librosa.note_to_hz('C7'))
+    pitch_mean = np.nanmean(f0) if not np.all(np.isnan(f0)) else 0  # Handle all NaN case
+    pitch_std = np.nanstd(f0) if not np.all(np.isnan(f0)) else 0
+    # Compute RMS energy
+    rms = librosa.feature.rms(y=y)
+    energy_mean = np.mean(rms)
+    energy_std = np.std(rms)
+    voiced_frames = np.sum(voiced_flag)
+    duration = len(y) / sr
+    speaking_rate = voiced_frames / duration if duration > 0 else 0
+    
+    # Concatenate all features into a single vector
+    features = np.concatenate([
+        mfcc_mean,          # 20 elements
+        mfcc_std,           # 20 elements
+        [pitch_mean, pitch_std, energy_mean, energy_std, speaking_rate]  # 5 elements
+    ])
+    return features
+    
 
-def knn_fallback(features):
-    templates = {
-        "Happy": [37, 7, 16, 1.2, 0.5],
-        "Angry": [33, 7, 14, 0.85, -1.5],
-        "Calm":  [28, 4.5, 11, 0.95, 0.2],
-        "Sad":   [22, 3.5, 9, 0.8, 0.3]
-    }
-    eps = 1e-6
-    current_stats = [
-        np.mean(features[:13]),
-        np.std(features[:13]),
-        np.ptp(features[:13]),
-        np.mean(features[6:10])/(np.mean(features[:5]) + eps),
-        np.mean(np.diff(features[:13]))
-    ]
-    distances = {}
-    for emotion, template in templates.items():
-        distances[emotion] = np.linalg.norm(np.array(current_stats) - np.array(template))
-    return min(distances, key=distances.get)
-def analyze_emotion(features):
-    mfcc = features[:13]
-    mean_mfcc = np.mean(mfcc)
-    std_mfcc = np.std(mfcc)
-    mfcc_range = np.ptp(mfcc)
-    min_mfcc = np.min(features)
-    max_mfcc = np.max(features)
-    normalized_mfcc = (mean_mfcc - min_mfcc) / (max_mfcc - min_mfcc)
-    eps = 1e-6
-    high_freq_ratio = np.mean(mfcc[6:10]) / np.mean(mfcc[:5] + eps)
-    spectral_flux = np.mean(np.diff(mfcc))
-    if mean_mfcc > 35 and std_mfcc > 6 and high_freq_ratio > 1.1:
+def detect_emotion(features):
+    pitch_mean = features[40]    
+    energy_mean = features[42]   
+    speaking_rate = features[44] 
+    if pitch_mean > 180 and energy_mean > 0.1 and speaking_rate > 10:
         return "Happy"
-    elif 30 < mean_mfcc <= 35 and spectral_flux < -1 and mfcc_range > 12:
-        return "Angry"
-    elif 25 < mean_mfcc <= 30 and std_mfcc < 5 and spectral_flux > -0.5:
-        return "Calm"
-    elif mean_mfcc <= 25 and mfcc_range < 10 and high_freq_ratio < 0.9:
-        return "Sad"
+    elif pitch_mean < 120 and energy_mean < 0.05 and speaking_rate < 5:
+        return "Depressed"
     else:
-        return knn_fallback(features)
-    # if normalized_mfcc > 0.6:
-    #     return "Happy"
-    # elif 0.50 < normalized_mfcc <= 0.6:
-    #     return "Angry"
-    # elif 0.40 < normalized_mfcc <= 0.50:
-    #     return "Calm"
-    # else:
-    #     return "Sad"
-from django.views.decorators.csrf import csrf_exempt
-import os
-from django.core.files.storage import FileSystemStorage
-# @csrf_exempt
-@csrf_exempt
+        return "Normal"
+@csrf_exempt  # Use with caution; better to handle CSRF properly in production.
 def analyze_voice(request):
-    if request.method == "POST" and request.FILES.get("audio"):
-        audio_file = request.FILES["audio"]
-        file_path = "recorded_audio.wav"
-        with open(file_path, "wb") as f:
+    """
+    Handle the audio file upload, conversion, feature extraction, and classification of voice emotion.
+    """
+    if request.method == 'POST' and request.FILES.get('audio'):
+        audio_file = request.FILES['audio']
+        input_path = 'temp_input_audio'
+        output_path = 'temp_converted_audio.wav'
+        
+        # Save the uploaded file locally.
+        with open(input_path, 'wb') as f:
             f.write(audio_file.read())
-        # Now that the file is already in WAV format, you can process it
-        y, sr = librosa.load(file_path, sr=None)
-        # Example: just compute the duration
-        duration = len(y) / sr
-        os.remove(file_path)
-        # For demonstration, we send the duration as emotion
-        return JsonResponse({"emotion": f"Duration: {duration:.2f} seconds"})
-    return JsonResponse({"error": "Invalid request"}, status=400)
-def analyze_voice(request):
-    if request.method == "POST" and request.FILES.get("audio"):
-        audio_file = request.FILES["audio"]
-        file_path = f"recorded_audio.wav"
-        with open(file_path, "wb") as f:
-            f.write(audio_file.read())
-        features = extract_features(file_path)
-        emotion = analyze_emotion(features)
-        os.remove(file_path)
+        
+        # Convert the input audio file to a proper WAV format.
+        conversion_success = convert_to_wav(input_path, output_path)
+        if not conversion_success:
+            os.remove(input_path)
+            return JsonResponse({"error": "Audio conversion failed."}, status=500)
+        
+        # Extract audio features using librosa.
+        features = extract_features(output_path)
+        emotion = detect_emotion(features)
+        
+        # Clean up temporary files.
+        if os.path.exists(input_path):
+            os.remove(input_path)
+        if os.path.exists(output_path):
+            os.remove(output_path)
+        
         return JsonResponse({"emotion": emotion})
-    return JsonResponse({"error": "Invalid request"}, status=400)
+    else:
+        return JsonResponse({"error": "Invalid request. Please upload an audio file."}, status=400)
 
 def detect_voice(request):
-    return render(request,"detect_voice.html")
+    return render(request, 'detect_voice.html')
